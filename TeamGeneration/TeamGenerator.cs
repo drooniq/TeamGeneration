@@ -1,4 +1,6 @@
-﻿namespace TeamGeneration;
+﻿using System.Text.Json;
+
+namespace TeamGeneration;
 
 public class TeamsGenerator()
 {
@@ -10,40 +12,69 @@ public class TeamsGenerator()
     public TeamsGenerator(List<Player> attendingPlayers, int numberOfCourts) : this()
     {
         _numberOfCourts = numberOfCourts;
-        _attendingPlayers = GenerateCompositePlayers(attendingPlayers); // calculate composite values for each player
-        _teams = GenerateTeams(_attendingPlayers, _numberOfCourts);     // create initial teams based upon nrOfCourts
+        _attendingPlayers = GenerateAndSortCompositePlayers(attendingPlayers);  // calculate composite values for each player
+        _teams = GenerateTeams(_attendingPlayers, _numberOfCourts);             // create initial teams based upon nrOfCourts
     }
     
-    public List<Team> GenerateTeams(List<CompositePlayer>? players, int? numberOfCourts )
+    
+    
+    public List<Team> GenerateTeams(List<CompositePlayer>? players = null, int? numberOfCourts = null )
     {
         List<Team> teams = [];
         
         if (numberOfCourts == null || players == null)
             return teams;
-        
-        // create balanced teams
+
+        var teamSizesList = CalculateTeamSize(players.Count(), _numberOfCourts!.Value);
+
+        //var value = (int)PenaltyWeight.Penalty / 100.0;
+
+        foreach (var player in players)
+        {
+            Console.WriteLine($"{player.CompositeScore:F3} => {player.Player!.Name}");
+        }
 
         return teams;
     }
+
+    private List<int> CalculateTeamSize(int numberOfPlayers, int numberOfCourts)
+    {
+        var numberOfTeams = 2 * numberOfCourts;
+        // Cap teams at player count if insufficient
+        numberOfTeams = Math.Min(numberOfTeams, numberOfPlayers);
+        var baseTeamSize = numberOfPlayers / numberOfTeams;
+        var remainingPlayers = numberOfPlayers % numberOfTeams;
+
+        var teamSizes = new List<int>(numberOfTeams);
+        for (int i = 0; i < numberOfTeams; i++)
+        {
+            teamSizes.Add(baseTeamSize + (i < remainingPlayers ? 1 : 0));
+        }
+        
+        return teamSizes;
+    }
     
-    private List<CompositePlayer> GenerateCompositePlayers(List<Player> _attendingPlayers)
+    public List<CompositePlayer> GenerateAndSortCompositePlayers(List<Player> attendingPlayers)
     {
         List<CompositePlayer> compositePlayers = new();
 
-        foreach (var player in _attendingPlayers)
+        foreach (var player in attendingPlayers)
         {
             var playerScore = CalculateCompositeScore(player);
             compositePlayers.Add(new CompositePlayer(player, playerScore));
         }
+
+        // sort descending b vs a instead of a vs b ascending
+        compositePlayers.Sort((a, b) => b.CompareTo(a));
         
         return compositePlayers;
     }    
-
+    
     private double CalculateCompositeScore(Player player)
     {
         // (w1 * RPnorm) + (w2 * MMRnorm)
         var rpNorm = player.RankingPoints / 2000.0;     // Normalize RP (0-2000)
-        var mmrNorm = (player.MMR - 1000) / 1000.0;     // Normalize MMR (1000-2000)
+        var mmrNorm = player.MMR / 1000.0;     // Normalize MMR (0-2000)
         var compositeScore =  ((double)NormWeights.RP / 100.0) * rpNorm +
                                     ((double)NormWeights.MMR / 100.0) * mmrNorm;
         
@@ -51,11 +82,17 @@ public class TeamsGenerator()
     }
 }
 
-public class CompositePlayer(Player player, double compositeScore)
+public class CompositePlayer(Player player, double compositeScore) : IComparable<CompositePlayer>
 {
     public Player? Player = player;
     public double CompositeScore = compositeScore;
     public Dictionary<Player, int> TeamPlayerHistory = new();
+    
+    public int CompareTo(CompositePlayer? other)
+    {
+        if (other == null) return 1;
+        return this.CompositeScore.CompareTo(other.CompositeScore);
+    }
 }
 
 public class Team(List<Player> teamPlayers, string teamName)
