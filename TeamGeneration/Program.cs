@@ -15,5 +15,5 @@ List<Player> attendingPlayers = new List<Player>()
 
 TeamsGenerator generator = new TeamsGenerator(attendingPlayers, 1);
 var compositePlayers = generator.GenerateAndSortCompositePlayers(attendingPlayers);
-var teams = generator.GenerateTeams(compositePlayers, 1);
+//var teams = generator.GenerateTeams(compositePlayers, 1);
 

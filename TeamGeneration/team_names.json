@@ -1,4 +1,4 @@
 ﻿{
   "Prefixes": ["Bug", "Stack", "Null", "Async", "Razor", "Code", "Cache", "Query", "Thread", "Blob"],
-  "Postfixes": ["Pointers", "Overflows", "Exceptions", "Awaiters", "Hackers", "Loggers", "Crabs", "Breakers", "Servers", "Glitches"]
+  "Suffixes": ["Pointers", "Overflows", "Exceptions", "Awaiters", "Hackers", "Loggers", "Crabs", "Breakers", "Servers", "Glitches"]
 }

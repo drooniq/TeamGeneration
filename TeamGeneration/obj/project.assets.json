@@ -8,25 +8,25 @@
     "net9.0": []
   },
   "packageFolders": {
-    "C:\\Users\\seemwaa001\\.nuget\\packages\\": {}
+    "/home/isotope/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\seemwaa001\\RiderProjects\\TeamGeneration\\TeamGeneration\\TeamGeneration.csproj",
+      "projectUniqueName": "/home/isotope/RiderProjects/TeamGeneration/TeamGeneration/TeamGeneration.csproj",
       "projectName": "TeamGeneration",
-      "projectPath": "C:\\Users\\seemwaa001\\RiderProjects\\TeamGeneration\\TeamGeneration\\TeamGeneration.csproj",
-      "packagesPath": "C:\\Users\\seemwaa001\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\seemwaa001\\RiderProjects\\TeamGeneration\\TeamGeneration\\obj\\",
+      "projectPath": "/home/isotope/RiderProjects/TeamGeneration/TeamGeneration/TeamGeneration.csproj",
+      "packagesPath": "/home/isotope/.nuget/packages/",
+      "outputPath": "/home/isotope/RiderProjects/TeamGeneration/TeamGeneration/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\seemwaa001\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "/home/isotope/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
       ],
       "sources": {
-        "C:\\dotnet\\9\\library-packs": {},
+        "/usr/lib/dotnet/library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -45,7 +45,7 @@
         "auditLevel": "low",
         "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "9.0.200"
+      "SdkAnalysisLevel": "9.0.100"
     },
     "frameworks": {
       "net9.0": {
@@ -66,7 +66,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\dotnet\\9\\sdk\\9.0.200/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/9.0.104/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
