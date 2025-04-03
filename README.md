@@ -1,11 +1,21 @@
-This is some code that generates teams (sport) based upon a few factors.
+# Sports Team Generator
 
-The goal is for the algorithm to generate teams based upon (Ranking Points, MMR and Penalty).
+This project generates sports teams based on a combination of key factors: **Ranking Points**, **MMR**, and **Penalty**.
 
-Ranking points: is the idea that players has an initial ranking point
-MMR: is value that is being calculated throughout an GameEvent ( lets say friends playing volleyboll, and plays a few matches ), MMR is adjusted after each match
-Penalty: is to try to avoid same players playing with eachother all the time
+## Key Features
 
-To be able to generate teams a roster of players and how many courts is to be used.
+- **Ranking Points**: Players begin with an initial skill-based ranking score.
+- **MMR (Matchmaking Rating)**: A dynamic rating that adjusts after each match in a `GameEvent` (e.g., a group of friends playing volleyball across multiple matches), reflecting player performance.
+- **Penalty**: Ensures variety by discouraging the same players from being paired together repeatedly.
 
-There is also a class that creates team names randomly. 
+## How It Works
+
+To create teams, the algorithm takes:
+- A roster of players.
+- The number of available courts.
+
+Additionally, a built-in class generates random team names for a fun and engaging experience.
+
+## Use Case
+
+Perfect for organizing casual sports events, like a volleyball game night with friends, where balanced and varied teams enhance the fun!
