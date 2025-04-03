@@ -2,5 +2,5 @@
 
 public enum PenaltyWeight
 {
-    Penalty = 50
+    Penalty = 300
 }

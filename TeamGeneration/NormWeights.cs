@@ -2,6 +2,6 @@
 
 public enum NormWeights
 {
-    RP  = 60, 
-    MMR = 40
+    RP  = 30, 
+    MMR = 70
 }
