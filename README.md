@@ -1,6 +1,6 @@
 # Sports Team Generator
 
-This project generates sports teams based on a combination of key factors: **Ranking Points**, **MMR**, and **Penalty**.
+This project generates sport teams based on a combination of key factors: **Ranking Points**, **MMR**, and **Penalty**.
 
 ## Key Features
 
