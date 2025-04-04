@@ -1,5 +1,8 @@
 ﻿namespace TeamGeneration;
 
+/// <summary>
+/// Generates teams from a list of players, optimizing for balanced teams and minimizing repeat pairings.
+/// </summary>
 public class TeamsGenerator()
 {
     private List<CompositePlayer>? _attendingPlayers;
@@ -8,13 +11,24 @@ public class TeamsGenerator()
     private List<Team>? _teams;
     private NameGenerator? _nameGenerator;
 
+    /// <summary>
+    /// Initializes a new instance of the TeamsGenerator class with specified players and court count.
+    /// </summary>
+    /// <param name="attendingPlayers">The list of players to generate teams from.</param>
+    /// <param name="numberOfCourts">The number of available courts.</param>
     public TeamsGenerator(List<Player> attendingPlayers, int numberOfCourts) : this()
     {
         _numberOfCourts = numberOfCourts;
         _nameGenerator = NameGenerator.CreateFromJson("../../../team_names.json");
     }
     
-public List<Team> GenerateTeams(List<CompositePlayer>? players = null, int? numberOfCourts = null)
+    /// <summary>
+    /// Generates teams from the provided players, balancing skill levels and avoiding frequent pairings.
+    /// </summary>
+    /// <param name="players">The list of players to distribute into teams. Uses class field if null.</param>
+    /// <param name="numberOfCourts">The number of courts available. Uses class field if null.</param>
+    /// <returns>A list of generated teams.</returns>
+    public List<Team> GenerateTeams(List<CompositePlayer>? players = null, int? numberOfCourts = null)
     {
         if (numberOfCourts == null || players == null)
             return new List<Team>();
@@ -37,6 +51,12 @@ public List<Team> GenerateTeams(List<CompositePlayer>? players = null, int? numb
         return teams;
     }
 
+    /// <summary>
+    /// Creates empty teams based on player count and available courts.
+    /// </summary>
+    /// <param name="playerCount">Total number of players to distribute.</param>
+    /// <param name="courtCount">Number of available courts.</param>
+    /// <returns>A list of empty teams with generated names.</returns>
     private List<Team> CreateEmptyTeams(int playerCount, int courtCount)
     {
         List<Team> teams = new List<Team>();
@@ -50,6 +70,11 @@ public List<Team> GenerateTeams(List<CompositePlayer>? players = null, int? numb
         return teams;
     }
 
+    /// <summary>
+    /// Identifies how often players have been teamed together historically.
+    /// </summary>
+    /// <param name="players">The list of players to analyze.</param>
+    /// <returns>A dictionary mapping player pairs to their team-up frequency.</returns>
     private Dictionary<(string, string), int> IdentifyCommonPairs(List<CompositePlayer> players)
     {
         Dictionary<(string, string), int> pairFrequency = new Dictionary<(string, string), int>();
@@ -72,6 +97,12 @@ public List<Team> GenerateTeams(List<CompositePlayer>? players = null, int? numb
         return pairFrequency;
     }
 
+    /// <summary>
+    /// Separates frequently paired players into different teams.
+    /// </summary>
+    /// <param name="players">The list of players to process.</param>
+    /// <param name="teams">The list of teams to assign players to.</param>
+    /// <returns>A list of players remaining after common pairs are assigned.</returns>
     private List<CompositePlayer> SeparateCommonPairs(List<CompositePlayer> players, List<Team> teams)
     {
         // Copy players to modify
@@ -113,6 +144,11 @@ public List<Team> GenerateTeams(List<CompositePlayer>? players = null, int? numb
         return remainingPlayers;
     }
 
+    /// <summary>
+    /// Assigns remaining players to teams while maintaining balance.
+    /// </summary>
+    /// <param name="remainingPlayers">The list of players yet to be assigned.</param>
+    /// <param name="teams">The list of teams to assign players to.</param>
     private void AssignRemainingPlayers(List<CompositePlayer> remainingPlayers, List<Team> teams)
     {
         // Add some randomness to player order to prevent deterministic patterns
@@ -137,6 +173,14 @@ public List<Team> GenerateTeams(List<CompositePlayer>? players = null, int? numb
         }
     }
     
+    /// <summary>
+    /// Finds the most suitable team for a player based on balance and history.
+    /// </summary>
+    /// <param name="player">The player to assign.</param>
+    /// <param name="teams">The list of available teams.</param>
+    /// <param name="teamSizesList">The target sizes for each team.</param>
+    /// <param name="penaltyWeight">The weight applied to repeat pairing penalties.</param>
+    /// <returns>The optimal team for the player.</returns>
     private Team FindOptimalTeam(CompositePlayer player, List<Team> teams, List<int> teamSizesList, double penaltyWeight)
     {
         return teams
@@ -145,6 +189,13 @@ public List<Team> GenerateTeams(List<CompositePlayer>? players = null, int? numb
             .First();
     }
     
+    /// <summary>
+    /// Calculates a team's score adjusted for player history penalties.
+    /// </summary>
+    /// <param name="player">The player being considered.</param>
+    /// <param name="team">The team to evaluate.</param>
+    /// <param name="penaltyWeight">The weight applied to repeat pairing penalties.</param>
+    /// <returns>The adjusted score for adding the player to the team.</returns>
     private double CalculateAdjustedScore(CompositePlayer player, Team team, double penaltyWeight)
     {
         // Base score: sum of CompositeScores
@@ -163,6 +214,10 @@ public List<Team> GenerateTeams(List<CompositePlayer>? players = null, int? numb
         return adjusted;
     }
 
+    /// <summary>
+    /// Updates the team-up history for all players in the generated teams.
+    /// </summary>
+    /// <param name="teams">The list of teams to update history for.</param>
     private void UpdateTeamPlayerHistory(List<Team> teams)
     {
         foreach (var team in teams)
@@ -181,6 +236,10 @@ public List<Team> GenerateTeams(List<CompositePlayer>? players = null, int? numb
         }
     }
     
+    /// <summary>
+    /// Logs the generated team compositions to the console.
+    /// </summary>
+    /// <param name="teams">The list of teams to log.</param>
     private void LogTeamResults(List<Team> teams)
     {
         Console.WriteLine("------------------------------------------------------------------------------------------------");
@@ -195,6 +254,12 @@ public List<Team> GenerateTeams(List<CompositePlayer>? players = null, int? numb
         }
     }
 
+    /// <summary>
+    /// Calculates the size of each team based on player and court counts.
+    /// </summary>
+    /// <param name="numberOfPlayers">Total number of players.</param>
+    /// <param name="numberOfCourts">Number of available courts.</param>
+    /// <returns>A list of team sizes.</returns>
     private List<int> CalculateTeamSize(int numberOfPlayers, int numberOfCourts)
     {
         var numberOfTeams = 2 * numberOfCourts;
@@ -211,23 +276,13 @@ public List<Team> GenerateTeams(List<CompositePlayer>? players = null, int? numb
         return teamSizes;
     }
     
+    /// <summary>
+    /// Creates and sorts composite players from the input player list.
+    /// </summary>
+    /// <param name="attendingPlayers">The list of basic players to convert.</param>
+    /// <returns>A sorted list of composite players.</returns>
     public List<CompositePlayer> GenerateAndSortCompositePlayers(List<Player> attendingPlayers)
     {
-//        var compositePlayers = attendingPlayers
-//                .Select(p => new CompositePlayer(p, CalculateCompositeScore(p))).ToList();
-        
-        // foreach (var player in attendingPlayers)
-        // {
-        //     var playerScore = CalculateCompositeScore(player);
-        //     compositePlayers.Add(new CompositePlayer(player, playerScore));
-        // }
-
-//        var sortedPlayers = compositePlayers
-//                .OrderByDescending(p => p.Player!.RankingPoints).ToList();
-
-        // sort descending b vs a instead of a vs b ascending
-        //compositePlayers.Sort((a, b) => b.CompareTo(a));
-        
         var compositeSortedPlayers = attendingPlayers
             .Select(p => new CompositePlayer(p.Name, p.RankingPoints, p.MMR, CalculateCompositeScore(p)))
             .OrderByDescending(p => p.CompositeScore)  // Sort by inherited RankingPoints
@@ -236,13 +291,11 @@ public List<Team> GenerateTeams(List<CompositePlayer>? players = null, int? numb
         return compositeSortedPlayers;
     }
     
-    /*private double GetTeamTotalCompositeScore(Team team, List<CompositePlayer> compositePlayers)
-    {
-        return team.Players
-            .Sum(p => compositePlayers
-                .First(cp => cp.Player == p).CompositeScore);
-    }  */  
-    
+    /// <summary>
+    /// Calculates a composite score based on player's ranking points and MMR.
+    /// </summary>
+    /// <param name="player">The player to calculate the score for.</param>
+    /// <returns>The calculated composite score.</returns>
     private double CalculateCompositeScore(Player player)
     {
         // (w1 * RPnorm) + (w2 * MMRnorm)
@@ -253,6 +306,11 @@ public List<Team> GenerateTeams(List<CompositePlayer>? players = null, int? numb
         return compositeScore;
     }
 
+    /// <summary>
+    /// Updates player statistics based on match results.
+    /// </summary>
+    /// <param name="winner">The winning team.</param>
+    /// <param name="loser">The losing team.</param>
     public void UpdateMatchResult(Team winner, Team loser)
     {
         foreach(var player in winner.Players)
@@ -268,33 +326,74 @@ public List<Team> GenerateTeams(List<CompositePlayer>? players = null, int? numb
     }
 }
 
+/// <summary>
+/// Represents a player with additional composite scoring and team history data.
+/// </summary>
 public class CompositePlayer(string name, int rankingPoints, int mmr, double compositeScore) 
     : Player(name, rankingPoints, mmr)
 {
+    /// <summary>
+    /// Gets or sets the player's composite score combining various metrics.
+    /// </summary>
     public double CompositeScore { get; set; } = compositeScore;
+    /// <summary>
+    /// Gets or sets the dictionary tracking how often this player has teamed with others.
+    /// </summary>
     public Dictionary<string, int> TeamPlayerHistory { get; set; } = new();
 }
 
-public class Team()
+/// <summary>
+/// Represents a team of players with a name and scoring functionality.
+/// </summary>
+public class Team
 {
+    /// <summary>
+    /// Gets or sets the list of players in the team.
+    /// </summary>
     public List<Player> Players = [];
+
+    /// <summary>
+    /// Gets or sets the team's name.
+    /// </summary>
     public string TeamName;
 
+    /// <summary>
+    /// Initializes a new instance of the Team class with default values.
+    /// </summary>
+    public Team() { }
+
+    /// <summary>
+    /// Initializes a new instance of the Team class with a specified name.
+    /// </summary>
+    /// <param name="name">The name of the team.</param>
     public Team(string name) : this()
     {
         TeamName = name;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the Team class with players and a name.
+    /// </summary>
+    /// <param name="teamPlayers">The list of players in the team.</param>
+    /// <param name="teamName">The name of the team.</param>
     public Team(List<Player> teamPlayers, string teamName) : this(teamName)
     {
         Players = teamPlayers;
     }
 
+    /// <summary>
+    /// Adds a player to the team.
+    /// </summary>
+    /// <param name="player">The player to add.</param>
     public void AddPlayer(Player player)
     {
         Players.Add(player);
     }
 
+    /// <summary>
+    /// Calculates the total composite score of the team based on player ranking points.
+    /// </summary>
+    /// <returns>The sum of all players' ranking points.</returns>
     public int TotalTeamCompositeScore()
     {
         return Players.Sum(p => p.RankingPoints);

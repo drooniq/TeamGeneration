@@ -1,18 +1,18 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿using TeamGeneration;
 
-using TeamGeneration;
-
-List<Player> attendingPlayers = new List<Player>()
+List<Player> attendingPlayers = new()
 {
-    new Player("Emil", 250, 0),
-    new Player("Sara", 500, 0),
-    new Player("Martin", 1000, 0),
+//    new Player("Emil", 250, 0),
+    new Player("Sara", 600, 0),
+//    new Player("Martin", 1000, 0),
     new Player("Lukas", 800, 0),
-    new Player("Jonas", 1200, 0),
+    new Player("Jonas", 1000, 0),
     new Player("Viktor", 800, 0),
-    new Player("Johannes", 900, 0),
+//    new Player("Johannes", 900, 0),
     new Player("Linus", 900, 0),
-    new Player("Alexander", 900, 0)
+    new Player("Karl", 500, 0),
+    new Player("Miles", 500, 0)
+//    new Player("Alexander", 900, 0)
 };
 
 var nrOfCourts = 1;
@@ -27,6 +27,7 @@ while (true)
     Console.WriteLine("\nTeams generated:");
     Console.WriteLine($"Team A: {teams[0].TeamName}");
     Console.WriteLine($"Team B: {teams[1].TeamName}");
+    
     if (nrOfCourts > 1)
     {
         Console.WriteLine($"Team C: {teams[2].TeamName}");
@@ -35,22 +36,22 @@ while (true)
 
     // Wait for input
     Console.WriteLine("\nEnter the winning team (A or B): ");
-    string input = Console.ReadLine()?.ToUpper();
+    var input = Console.ReadLine()?.ToUpper();
 
-    // Update match result based on input
-    if (input == "A")
+    switch (input)
     {
-        generator.UpdateMatchResult(winner: teams[0], loser: teams[1]);
-        Console.WriteLine($"{teams[0].TeamName} wins!");
-    }
-    else if (input == "B")
-    {
-        generator.UpdateMatchResult(winner: teams[1], loser: teams[0]);
-        Console.WriteLine($"{teams[1].TeamName} wins!");
-    }
-    else
-    {
-        Console.WriteLine("Invalid input. Please enter 'A' or 'B'. Skipping update.");
+        // Update match result based on input
+        case "A":
+            generator.UpdateMatchResult(winner: teams[0], loser: teams[1]);
+            Console.WriteLine($"{teams[0].TeamName} wins!");
+            break;
+        case "B":
+            generator.UpdateMatchResult(winner: teams[1], loser: teams[0]);
+            Console.WriteLine($"{teams[1].TeamName} wins!");
+            break;
+        default:
+            Console.WriteLine("Invalid input. Please enter 'A' or 'B'. Skipping update.");
+            break;
     }
 
     // Handle multiple courts (optional)
@@ -59,19 +60,19 @@ while (true)
         Console.WriteLine("\nEnter the winning team for second court (C or D): ");
         input = Console.ReadLine()?.ToUpper();
 
-        if (input == "C")
+        switch (input)
         {
-            generator.UpdateMatchResult(winner: teams[2], loser: teams[3]);
-            Console.WriteLine($"{teams[2].TeamName} wins!");
-        }
-        else if (input == "D")
-        {
-            generator.UpdateMatchResult(winner: teams[3], loser: teams[2]);
-            Console.WriteLine($"{teams[3].TeamName} wins!");
-        }
-        else
-        {
-            Console.WriteLine("Invalid input. Please enter 'C' or 'D'. Skipping update.");
+            case "C":
+                generator.UpdateMatchResult(winner: teams[2], loser: teams[3]);
+                Console.WriteLine($"{teams[2].TeamName} wins!");
+                break;
+            case "D":
+                generator.UpdateMatchResult(winner: teams[3], loser: teams[2]);
+                Console.WriteLine($"{teams[3].TeamName} wins!");
+                break;
+            default:
+                Console.WriteLine("Invalid input. Please enter 'C' or 'D'. Skipping update.");
+                break;
         }
     }
 
