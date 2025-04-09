@@ -76,6 +76,24 @@ while (true)
         }
     }
 
-    Console.WriteLine("\nPress any key to generate new teams...");
-    Console.ReadKey(); // Wait for user to press a key before looping
+    Console.WriteLine("\nPress any key to generate new teams or 'X' to stop all matches...");
+    var key = Console.ReadKey(true).KeyChar; // Read single key press
+    Console.WriteLine(); // New line after key press
+
+    if (char.ToUpper(key) == 'X')
+    {
+        CloseMatches(compositePlayers);
+        break; // Exit the loop
+    }
+}
+
+// Method stub for you to implement
+static void CloseMatches(List<CompositePlayer> players)
+{
+    players.ForEach(p => p.RankingPoints += p.MMR / 10);
+    Console.WriteLine("\nMatches closed. Final player rankings:");
+    foreach (var player in players)
+    {
+        Console.WriteLine($"Player: {player.Name}, RankingScore: {player.RankingPoints}  (MMR): {player.MMR})");
+    }
 }

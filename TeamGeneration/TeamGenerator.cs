@@ -5,11 +5,8 @@
 /// </summary>
 public class TeamsGenerator()
 {
-    private List<CompositePlayer>? _attendingPlayers;
     private int? _numberOfCourts;
-    private readonly Random _random = new();
-    private List<Team>? _teams;
-    private NameGenerator? _nameGenerator;
+    private readonly NameGenerator? _nameGenerator;
 
     /// <summary>
     /// Initializes a new instance of the TeamsGenerator class with specified players and court count.
@@ -45,7 +42,7 @@ public class TeamsGenerator()
         // Step 4: Update player history data
         UpdateTeamPlayerHistory(teams);
         
-        // Step 5: Log results
+        // Step 5: Log Teams
         LogTeamResults(teams);
 
         return teams;
@@ -62,7 +59,7 @@ public class TeamsGenerator()
         List<Team> teams = new List<Team>();
         var teamSizesList = CalculateTeamSize(playerCount, courtCount);
         
-        foreach (var teamSize in teamSizesList)
+        foreach (var unused in teamSizesList)
         {
             teams.Add(new Team(_nameGenerator!.GenerateTeamName()));
         }
