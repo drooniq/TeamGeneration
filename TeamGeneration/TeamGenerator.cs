@@ -5,7 +5,18 @@
 /// </summary>
 public class TeamsGenerator()
 {
+    
+    
+    // Constants for MMR adjustment calculations.  = BASE_SCORE + (K_FACTOR * difference)
     public const double WIN_LOSE_K_FACTOR = 0.04;
+    public const int    MMR_CONVERT_BASE_SCORE = 10;
+    
+    // Normalization weights for composite score calculation
+    public const double NORM_WEIGHT_RP = 0.3;
+    public const double NORM_WEIGHT_MMR = 0.7;
+
+    // Weight used for penalizing players who have teamed up before
+    public const double PENALTY_WEIGHT = 3.0;
 
     private int? _numberOfCourts;
     private readonly NameGenerator? _nameGenerator;
@@ -157,14 +168,13 @@ public class TeamsGenerator()
             .ToList();
 
         var teamSizesList = CalculateTeamSize(teams.Sum(t => t.Players.Count) + sortedPlayers.Count, teams.Count / 2);
-        var penaltyWeight = (double)PenaltyWeight.Penalty / 100;
 
         while (sortedPlayers.Count > 0)
         {
             var currentPlayer = sortedPlayers[0];
 
             // Find the team with the lowest adjusted score
-            var teamToAddTo = FindOptimalTeam(currentPlayer, teams, teamSizesList, penaltyWeight);
+            var teamToAddTo = FindOptimalTeam(currentPlayer, teams, teamSizesList);
 
             // Add the player to the team
             teamToAddTo.Players.Add(currentPlayer);
@@ -178,14 +188,12 @@ public class TeamsGenerator()
     /// <param name="player">The player to assign.</param>
     /// <param name="teams">The list of available teams.</param>
     /// <param name="teamSizesList">The target sizes for each team.</param>
-    /// <param name="penaltyWeight">The weight applied to repeat pairing penalties.</param>
     /// <returns>The optimal team for the player.</returns>
-    private Team FindOptimalTeam(CompositePlayer player, List<Team> teams, List<int> teamSizesList,
-        double penaltyWeight)
+    private Team FindOptimalTeam(CompositePlayer player, List<Team> teams, List<int> teamSizesList)
     {
         return teams
             .Where(t => t.Players.Count < teamSizesList[teams.IndexOf(t)]) // Not full
-            .OrderBy(t => CalculateAdjustedScore(player, t, penaltyWeight))
+            .OrderBy(t => CalculateAdjustedScore(player, t))
             .First();
     }
 
@@ -194,9 +202,8 @@ public class TeamsGenerator()
     /// </summary>
     /// <param name="player">The player being considered.</param>
     /// <param name="team">The team to evaluate.</param>
-    /// <param name="penaltyWeight">The weight applied to repeat pairing penalties.</param>
     /// <returns>The adjusted score for adding the player to the team.</returns>
-    private double CalculateAdjustedScore(CompositePlayer player, Team team, double penaltyWeight)
+    private double CalculateAdjustedScore(CompositePlayer player, Team team)
     {
         // Base score: sum of CompositeScores
         double baseScore = team.Players.Sum(p => p is CompositePlayer cp ? cp.CompositeScore : 0);
@@ -206,7 +213,7 @@ public class TeamsGenerator()
             .Sum(p => player.TeamPlayerHistory.GetValueOrDefault(p.Name, 0));
 
         // Apply a quadratic penalty to more strongly discourage repeat pairings
-        double quadraticPenalty = penalty * penalty * (penaltyWeight * 2);
+        double quadraticPenalty = penalty * penalty * (PENALTY_WEIGHT * 2);
 
         double adjusted = baseScore + quadraticPenalty;
         //Console.WriteLine($"{player.Name} to {team.TeamName}: base={baseScore:F3}, penalty={penalty}, adjusted={adjusted:F3}");
@@ -304,9 +311,9 @@ public class TeamsGenerator()
     {
         // (w1 * RPnorm) + (w2 * MMRnorm)
         var rpNorm = player.RankingPoints / 2000.0; // Normalize RP (0-2000)
-        var mmrNorm = player.MMR / 1000.0; // Normalize MMR (0-2000)
-        var compositeScore = ((double)NormWeights.RP / 100.0) * rpNorm +
-                             ((double)NormWeights.MMR / 100.0) * mmrNorm;
+        var mmrNorm = player.MMR / 1000.0; // Normalize MMR (0-1000)
+        var compositeScore = NORM_WEIGHT_RP  * rpNorm +
+                                   NORM_WEIGHT_MMR * mmrNorm;
         return compositeScore;
     }
 
@@ -327,8 +334,8 @@ public class TeamsGenerator()
         int loserDifference = totalRankingPointsWinner - totalRankingPointsLoser;
 
         // Calculate MMR changes with no clamping
-        int winnerMmrChange = 10 + (winnerDifference > 0 ? (int)(winnerDifference * WIN_LOSE_K_FACTOR) : 0);
-        int loserMmrChange = -10 - (loserDifference < 0 ? (int)(-loserDifference * WIN_LOSE_K_FACTOR) : 0);
+        int winnerMmrChange = MMR_CONVERT_BASE_SCORE + (winnerDifference > 0 ? (int)(winnerDifference * WIN_LOSE_K_FACTOR) : 0);
+        int loserMmrChange = -MMR_CONVERT_BASE_SCORE - (loserDifference < 0  ? (int)(-loserDifference * WIN_LOSE_K_FACTOR) : 0);
 
         foreach (var player in winner.Players)
         {
@@ -409,7 +416,7 @@ public class Team
     }
 
     /// <summary>
-    /// Calculates the total composite score of the team based on player ranking points.
+    /// Calculates the total ranking score of the team based on player ranking points.
     /// </summary>
     /// <returns>The sum of all players' ranking points.</returns>
     public int TotalTeamRankingScore()
