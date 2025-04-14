@@ -4,18 +4,23 @@ List<Player> attendingPlayers = new()
 {
 //    new Player("Emil", 250, 0),
     new Player("Sara", 600, 0),
-//    new Player("Martin", 1000, 0),
+    new Player("Martin", 800, 0),
     new Player("Lukas", 800, 0),
-    new Player("Jonas", 1000, 0),
-    new Player("Viktor", 800, 0),
-//    new Player("Johannes", 900, 0),
-    new Player("Linus", 900, 0),
-    new Player("Karl", 500, 0),
-    new Player("Miles", 500, 0)
+    new Player("Jonas", 900, 0),
+    //new Player("Viktor", 800, 0),
+    new Player("Wilhelm", 850, 0),
+    //   new Player("Johannes", 900, 0),
+    new Player("Linus", 800, 0),
+    new Player("Edward", 900, 0),
+    new Player("Karl", 700, 0),
+    new Player("Miles", 600, 0),
+    new Player("Marcus", 700, 0),
+
+    new Player("Tor", 800, 0)
 //    new Player("Alexander", 900, 0)
 };
 
-var nrOfCourts = 1;
+var nrOfCourts = 2;
 
 TeamsGenerator generator = new TeamsGenerator(attendingPlayers, nrOfCourts);
 var compositePlayers = generator.GenerateAndSortCompositePlayers(attendingPlayers);
@@ -58,6 +63,7 @@ while (true)
     if (nrOfCourts > 1)
     {
         Console.WriteLine("\nEnter the winning team for second court (C or D): ");
+        Console.ReadLine();
         input = Console.ReadLine()?.ToUpper();
 
         switch (input)
